@@ -49,12 +49,12 @@ public class HelloController implements Initializable {
             new Thread(() -> {
                 try {
                     while (true){
-                        String s = dataInputStream.readUTF();
+                        String w = dataInputStream.readUTF();
 
-                        if (s.equals("/end")) {
+                        if (w.equals("/end")) {
                             break;
                         }
-                        jta.appendText(s + "\n");
+                        jta.appendText(w + "\n");
                     }
                 } catch (IOException e) {
                     e.printStackTrace();

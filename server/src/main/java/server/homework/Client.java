@@ -1,46 +1,43 @@
 package server.homework;
 
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.net.Socket;
-import java.util.Scanner;
 
-    public class Client implements Runnable {
+    public class Client {
         private Socket socket;
-        private PrintWriter printWriter;
-        private Scanner in;
-        private String name;
+        private Server server;
+        private DataInputStream in;
+        private DataOutputStream out;
 
-        public Client(Socket socket) {
-            try {
-                this.socket = socket;
-               printWriter = new PrintWriter(socket.getOutputStream());
-                in = new Scanner(socket.getInputStream());
-                name = "server.homework.Client";
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-
-        @Override
-        public void run() {
-            while (true) {
-                if (in.hasNext()) {
-                    String w = in.nextLine();
-                    System.out.println(name + ": " + w);
-                    printWriter.println("entered: " + w);
-                    printWriter.flush();
-                    if (w.equalsIgnoreCase("END"))
-                        break;
+        public Client(Socket socket) throws IOException {
+            this.socket = socket;
+            this.server = server;
+            out = new DataOutputStream(socket.getOutputStream());
+            in = new DataInputStream(socket.getInputStream());
+            new Thread(() -> {
+                try {
+                    while (true) {
+                        String w = in.readUTF();
+                        if (w.equals("/end")) {
+                            break;
+                        }
+                    }
+                    try {
+                        System.out.println("server.homework.Client disconnected");
+                        socket.close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
                 }
-            }
-            try{
-                System.out.println("server.homework.Client disconnected");
-                socket.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+
+            });
+
         }
 
     }
+
 

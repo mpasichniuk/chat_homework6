@@ -8,36 +8,32 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 
 public class Server {
-    private ServerSocket serverSocket;
+    private ServerSocket server;
     private Socket socket;
     private final int PORT = 8000;
 
     private List<Client> client;
 
-    public void serverSocket() {
+    public void Server() throws IOException {
         client = new CopyOnWriteArrayList<>();
 
         try {
             try {
-                serverSocket = new ServerSocket(8000);
+                server = new ServerSocket(8000);
+                client.add(new Client(socket));
             } catch (IOException e) {
                 e.printStackTrace();
             }
             System.out.println("Waiting...");
 
             while (true) {
-                try {
-                    socket = serverSocket.accept();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+                    socket = server.accept();
                 System.out.println("Connected");
-                new Thread(new Client(socket)).start();
             }
         } finally {
             try {
                 socket.close();
-                serverSocket.close();
+                server.close();
                 System.out.println("closed");
             } catch (IOException e) {
                 e.printStackTrace();
